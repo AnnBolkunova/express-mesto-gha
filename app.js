@@ -24,6 +24,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/users', users);
 app.use('/cards', cards);
 
+app.all('/*', (req, res) => {
+  res.status(400).send({ message: 'Страница не найдена' });
+});
+
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);
