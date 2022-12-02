@@ -6,7 +6,6 @@ const { STATUS_CREATED } = require('../utils/constants');
 
 module.exports.getAllCards = (req, res, next) => {
   Card.find({})
-    .populate(['owner', 'likes'])
     .then((cards) => res.send({ data: cards }))
     .catch(next);
 };
@@ -17,7 +16,13 @@ module.exports.createCard = (req, res, next) => {
 
   Card.create({ name, link, owner })
     .then((cardWasCreated) => res.status(STATUS_CREATED).send({ data: cardWasCreated }))
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Некорректный id карточки'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.deleteCard = (req, res, next) => {
